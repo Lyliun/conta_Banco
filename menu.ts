@@ -1,5 +1,5 @@
 import readlinesync = require("readline-sync");
-import { colors } from "./src/Colors";
+import { colors } from "./src/util/colors/Colors";
 
 /**
  * Função principal do programa.
