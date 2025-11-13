@@ -8,34 +8,73 @@ export class ContaController implements ContaRepository {
     numero: number = 0;
     
     procurarPorNumero(numero: number): void {
-        let buscaConta = this.buscarNoArray(numero);
+        try {
+            const buscaConta = this.buscarNoArray(numero);
 
-        if (buscaConta != null) {
-            buscaConta.visualizar();
-        }else 
-            console.log(colors.fg.red,"\nConta numero: " + numero + " não foi encontrada!", colors.reset);
-    }
-
-    listarTodas(): void{
-        for (let conta of this.listaContas){
-            conta.visualizar();
+            if (buscaConta) {
+                buscaConta.visualizar();
+            } else {
+                console.log(colors.fg.red, `\nConta número: ${numero} não foi encontrada!`, colors.reset);
+            }
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao procurar conta:", error, colors.reset);
         }
     }
-    cadastrar(conta: Conta): void {
-        this.listaContas.push(conta);
-        console.log(colors.fg.green, "\nA Conta número: " + conta.numero + "foi criada com sucesso!", colors.reset);
-    }
-    atualizar(conta: Conta): void {
-        let buscaConta = this.buscarNoArray(conta.numero);
 
-        if (buscaConta != null) {
-            this.listaContas[this.listaContas.indexOf(buscaConta)] = conta;
-            console.log(colors.fg.green, "\nA Conta numero: " + conta.numero + " foi atualizada com sucesso!", colors.reset);
-        }else
-            console.log(colors.fg.red, "\nA Conta numero: " + conta.numero + " nao foi encontrada!", colors.reset);
+    listarTodas(): void {
+        try {
+            if (this.listaContas.length === 0) {
+                console.log(colors.fg.yellow, "\nNenhuma conta cadastrada ainda.", colors.reset);
+                return;
+            }
+
+            for (let conta of this.listaContas) {
+                conta.visualizar();
+            }
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao listar contas:", error, colors.reset);
+        }
     }
+    
+    cadastrar(conta: Conta): void {
+        try {
+            this.listaContas.push(conta);
+            console.log(colors.fg.green, `\nA Conta número: ${conta.numero} foi criada com sucesso!`, colors.reset);
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao cadastrar conta:", error, colors.reset);
+        } finally {
+            console.log(colors.fg.cyan, "\nOperação de cadastro finalizada.", colors.reset);
+        }
+    }
+
+     atualizar(conta: Conta): void {
+        try {
+            const buscaConta = this.buscarNoArray(conta.numero);
+
+            if (buscaConta) {
+                this.listaContas[this.listaContas.indexOf(buscaConta)] = conta;
+                console.log(colors.fg.green, `\nA Conta número: ${conta.numero} foi atualizada com sucesso!`, colors.reset);
+            } else {
+                console.log(colors.fg.red, `\nA Conta número: ${conta.numero} não foi encontrada!`, colors.reset);
+            }
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao atualizar conta:", error, colors.reset);
+        }
+    }
+    
     deletar(numero: number): void {
-        throw new Error("Method not implemented.");
+        try {
+            const conta = this.buscarNoArray(numero);
+
+            if (conta) {
+                this.listaContas.splice(this.listaContas.indexOf(conta), 1);
+                console.log(colors.fg.green, `\nA Conta número: ${numero} foi deletada com sucesso!`, colors.reset);
+            } else {
+                console.log(colors.fg.red, `\nConta número: ${numero} não foi encontrada!`, colors.reset);
+            }
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao deletar conta:", error, colors.reset);
+        }
     }
     sacar(numbero: number): void {
         throw new Error("Method not implemented.");
@@ -52,13 +91,16 @@ export class ContaController implements ContaRepository {
     }
 
     //Checa se uma Conta existe
-    public buscarNoArray(numero: number): Conta | null {
-
-        for (let conta of this.listaContas) {
-            if (conta.numero === numero)
-                return conta;
-        }
-
+   public buscarNoArray(numero: number): Conta | null {
+        try {
+            for (let conta of this.listaContas) {
+                if (conta.numero === numero)
+                    return conta;
+            }
         return null;
+        } catch (error) {
+            console.error(colors.fg.red, "\nErro ao buscar conta no array:", error, colors.reset);
+                return null;
+        }
     }
 }
