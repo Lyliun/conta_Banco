@@ -10,7 +10,7 @@ export interface ContaRepository {
     deletar(numero: number): void;
 
     //Métodos bancários
-    sacar(numbero: number): void;
+    sacar(numero: number, valor: number ): void;
     depositar(numero: number, valor: number): void;
-    transferir(numeroOrigigem: number, numeroDestino: number, valor: number): void;
+    transferir(numeroOrigem: number, numeroDestino: number, valor: number): void;
 }
